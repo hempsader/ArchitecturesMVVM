@@ -34,13 +34,14 @@ import com.example.architectures.network.RetrofitClient
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
+import kotlinx.coroutines.Deferred
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.callbackFlow
+import kotlinx.coroutines.flow.channelFlow
 
 open class RemoteDataSource {
 
-  fun searchResultsObservable(query: String): Observable<TmdbResponse> {
-    return RetrofitClient.moviesApi
-        .searchMovie(RetrofitClient.API_KEY, query)
-        .subscribeOn(Schedulers.io())
-        .observeOn(AndroidSchedulers.mainThread())
+  fun searchResultsObservable(query: String): Deferred<TmdbResponse> {
+    return RetrofitClient.moviesApi.searchMovie(RetrofitClient.API_KEY,query)
   }
 }

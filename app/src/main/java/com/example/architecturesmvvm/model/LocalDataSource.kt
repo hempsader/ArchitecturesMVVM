@@ -31,36 +31,54 @@
 package com.example.architectures.model
 
 import android.app.Application
+import android.util.Log
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleObserver
+import androidx.lifecycle.OnLifecycleEvent
 import io.reactivex.Observable
+import io.reactivex.disposables.Disposable
+import kotlinx.coroutines.*
+import kotlinx.coroutines.flow.Flow
 import kotlin.concurrent.thread
 
 
-open class LocalDataSource(application: Application) {
+open class LocalDataSource(application: Application): LifecycleObserver {
+
 
   private val movieDao: MovieDao
-  open val allMovies: Observable<List<Movie>>
+
+  @OnLifecycleEvent(Lifecycle.Event.ON_PAUSE)
+  fun getAllMvovies(): List<Movie> {
+        var list: List<Movie>
+        val job =  GlobalScope.async {
+            movieDao.allMovies()
+          }
+        runBlocking {
+          list =  job.await()
+        }
+    Log.d("aa","asdasdasdas")
+        return list
+  }
 
   init {
     val db = LocalDatabase.getInstance(application)
     movieDao = db.movieDao()
-    allMovies = movieDao.all
   }
 
-
   fun insert(movie: Movie) {
-    thread {
+    GlobalScope.launch(Dispatchers.IO) {
       movieDao.insert(movie)
     }
   }
 
   fun delete(movie: Movie) {
-    thread {
+    GlobalScope.launch(Dispatchers.IO) {
       movieDao.delete(movie.id)
     }
   }
 
   fun update(movie: Movie) {
-    thread {
+    GlobalScope.launch(Dispatchers.IO) {
       movieDao.update(movie)
     }
   }

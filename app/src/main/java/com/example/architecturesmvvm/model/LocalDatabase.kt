@@ -36,7 +36,7 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 
-@Database(entities = [Movie::class], version = 1)
+@Database(entities = [Movie::class], version = 2)
 @TypeConverters(IntegerListTypeConverter::class)
 abstract class LocalDatabase : RoomDatabase() {
 
@@ -55,6 +55,7 @@ abstract class LocalDatabase : RoomDatabase() {
             INSTANCE =
                 Room.databaseBuilder(application, LocalDatabase::class.java, DB_NAME)
                     .allowMainThreadQueries()
+                  .fallbackToDestructiveMigration()
                     .build()
           }
         }

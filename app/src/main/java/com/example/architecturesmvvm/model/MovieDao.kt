@@ -36,12 +36,14 @@ import androidx.room.OnConflictStrategy.REPLACE
 import androidx.room.Query
 import androidx.room.Update
 import io.reactivex.Observable
+import kotlinx.coroutines.Deferred
+import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface MovieDao {
 
-  @get:Query("SELECT * FROM movie_table")
-  val all: Observable<List<Movie>>
+  @Query("SELECT * FROM movie_table")
+  suspend fun allMovies(): List<Movie>
 
   @Insert(onConflict = REPLACE)
   fun insert(movie: Movie)
