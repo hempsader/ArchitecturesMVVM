@@ -55,12 +55,13 @@
         android:layout_height="wrap_content">
 
         <EditText
-          android:id="@+id/movie_release_date"
-          android:layout_width="match_parent"
-          android:layout_height="wrap_content"
-          android:hint="Release Year"
-          android:maxLines="1"
-          android:singleLine="true" />
+            android:id="@+id/movie_release_date"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Release Year"
+            android:inputType="numberSigned"
+            android:maxLines="1"
+            android:singleLine="true" />
 
       </com.google.android.material.textfield.TextInputLayout>
 
@@ -74,7 +75,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/dp_double"
-        android:onClick="onClickAddMovie"
+        android:id="@+id/addMovieButton"
         style="@style/Widget.MaterialComponents.Button"
         android:text="Add Movie"/>
 

@@ -47,7 +47,7 @@ open class LocalDataSource(application: Application): LifecycleObserver {
 
   private val movieDao: MovieDao
 
-  @OnLifecycleEvent(Lifecycle.Event.ON_PAUSE)
+
   fun getAllMvovies(): List<Movie> {
         var list: List<Movie>
         val job =  GlobalScope.async {
@@ -56,7 +56,6 @@ open class LocalDataSource(application: Application): LifecycleObserver {
         runBlocking {
           list =  job.await()
         }
-    Log.d("aa","asdasdasdas")
         return list
   }
 

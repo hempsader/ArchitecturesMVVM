@@ -1,41 +1,54 @@
 package com.example.architecturesmvvm
 
-import androidx.appcompat.app.AppCompatActivity
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
-import androidx.lifecycle.Lifecycle
+import android.view.View
+import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.LifecycleOwner
-import androidx.lifecycle.LifecycleRegistry
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.architectures.model.LocalDataSource
 import com.example.architectures.model.Movie
-import com.example.architectures.model.RemoteDataSource
-import kotlinx.coroutines.*
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.map
+import com.example.architecturesmvvm.viewModel.MainViewModel
+import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity(), LifecycleOwner {
-    private lateinit var source : LocalDataSource
-    private lateinit var lifecycleRegistry: LifecycleRegistry
-
+    private val viewModelMain by lazy {
+        ViewModelProvider(this,object: ViewModelProvider.Factory{
+            override fun <T : ViewModel?> create(modelClass: Class<T>): T {
+                return MainViewModel(LocalDataSource(application)) as T
+            }
+        })[MainViewModel::class.java]
+    }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        lifecycleRegistry = LifecycleRegistry(this)
 
-        source = LocalDataSource(application)
-        val remote = RemoteDataSource()
-        lifecycle.addObserver(source)
-     //   source.getAllMvovies()
+        movies_recyclerview.apply {
+            this.layoutManager = LinearLayoutManager(this@MainActivity)
+        }
+
+        viewModelMain.getMovieList().observe(this, Observer {movies->
+            if(movies.isNotEmpty()){
+                no_movies_layout.visibility = View.GONE
+                movies_recyclerview.apply {
+                   this.adapter = ListMovieRecycler(movies)
+                }
+            }else{
+                no_movies_layout.visibility = View.VISIBLE
+            }
+        })
+
+        addMovieActivity()
     }
 
-    override fun onStart() {
-        super.onStart()
-        lifecycleRegistry.currentState = Lifecycle.State.STARTED
+    fun addMovieActivity(){
+        fab.setOnClickListener {
+            startActivity(Intent(this, AddMovieActivity::class.java))
+        }
     }
-    override fun onPause() {
-       // lifecycleRegistry.currentState = Lifecycle.State.RESUMED
-        super.onPause()
-    }
-
 
 }
